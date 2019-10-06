@@ -1,40 +1,36 @@
-<!DOCTYPE html>
 <html>
 	<head>
 		<title>Secure Storage</title>
 		<style>
 			*{font-family:Verdana; color:white;}
-			.buttonView{ display: inline-block; background-color: DodgerBlue; border: 1px solid white; padding: 5px 15px; border-radius: 10%; font-size:1.5vw; margin-top:5px;}
 			.ptag{width:65%; margin:10px auto; font-size: 1.5vw; text-align:center;}
+			#link {width:49.7vw; float:left; border-right:0.2vw dotted white;}
+			#upload {width:49.7vw; float:right;}
+			#welcome {width: 50vw; margin: 75px auto; font-size: 2vw; text-align:center;}
+			@media (min-width: 350px) and (max-width:550px)  {
+				#link { float: none; width: 100vw; border-right: none; border-bottom:0.5vw dotted white; border-top:0.5vw dotted white; padding:10px 0px;}
+				#link p { font-size:5vw;}
+				#upload { float: none; width: 100vw; border-right: none; border-bottom:0.5vw dotted white; padding:10px 0px 20px 0px;}
+				#upload p { font-size:5vw;}
+				#welcome { width: 75vw; font-size: 5vw; margin: 50px auto;}
+			}
 		</style>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
-	<div style="height:50px; padding:10px 0px;">
-		<div style="float:left; height:30px; margin-left:20px;">
-			<a style="font-size:3vw;">Secure Storage</a>
-		</div>
-		<div style="float:right; margin-right:20px;">
-			<a class="buttonView">Login</a>
-			<a class="buttonView">Signup</a>
-		</div>
-	</div>
-	<body style="min-height: 100vh; background-image: linear-gradient(SlateBlue, DodgerBlue); margin:0px;">
-	<br><br>
-	<p style="width: 50vw; margin: 50px auto 50px auto; font-size: 2vw; text-align:center;"> Welcome to Secure Storage. <br> Enter your link below or click on generate a link.</p><br>
-	<div style="width:100vw; margin:25px 0px 200px 0px;">
-		<div style="width:49.7vw; float:left; border-right:0.2vw dotted white;">
+	<?php include 'navbar.php'; ?>
+	<body style="background-image: linear-gradient(#000080, #6666ff, #6666ff); margin:0px; position:relative;">
+	<p id="welcome"> Welcome to Secure Storage. <br> Enter your link below or click on generate a link.</p>
+	<div style="width:100vw; margin:25px 0px 25px 0px;">
+		<div id="link">
 			<p class="ptag">Enter the Link</p>
-			<input type="text" style="width:60%; margin:10px auto; display:block; height:20px;">
+			<input type="text" style="width:60%; height:35px; margin:10px auto; display:block; border-radius:10px; color:blue;">
 		</div>
-		<div style="width:49.7vw; float:right;">
+		<div id="upload">
 			<p class="ptag">Upload a file</p>
+			<center><button class="buttonView" onclick="window.location.href='upload.php'" style="margin-bottom:10pxx;">Upload</button></center>
 		</div>
 	</div>
 	<br>
-	<footer style="clear:both;">
-		<svg viewBox="0 0 1440 150">
-			<polygon style="fill:white;" points="1440 150, 0 150, 0 100, 72 0, 144 100, 216 0, 288 100, 360 0, 432 100, 504 0, 576 100, 648 0, 720 100, 792 0, 864 100,936 0, 1008 100, 1080 0, 1152 100, 1224 0, 1296 100, 1368 0, 1440 100">
-			</polygon>
-		</svg>
-	</footer>
 	</body>
+	<?php include 'footer.php'; ?>
 </html>
