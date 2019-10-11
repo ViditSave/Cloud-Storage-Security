@@ -11,7 +11,15 @@
 		<a id="home" href="index.php">Secure Storage</a>
 	</div>
 	<div style="float:right; margin-right:20px;">
-		<button class="buttonView" onclick="window.location.href='login.php'">Login</button>
-		<button class="buttonView" onclick="window.location.href='signup.php'">Signup</button>
+	<?php
+		if (isset($_SESSION["username"])&isset($_SESSION["userid"])) {
+			echo '	<button class="buttonView">'.$_SESSION["username"].'</button>
+					<button class="buttonView" onclick="window.location.href=\'logout.php\'">Logout</button>';
+		}
+		else {
+			echo '	<button class="buttonView" onclick="window.location.href=\'login.php\'">Login</button>
+					<button class="buttonView" onclick="window.location.href=\'signup.php\'">Signup</button>';
+		}
+	?>
 	</div>
 </div>
