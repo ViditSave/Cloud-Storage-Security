@@ -1,102 +1,118 @@
-<?php 		
-session_start();
-$output="";
-if(isset($_POST["submit"])) {
-	$fname=$_POST["fname"];
-	$lname=$_POST["lname"];
-	$email=$_POST["email"];
-	$contn=$_POST["cnumb"];
-	$uname=$_POST["uname"];
-	$passw=$_POST["pwd"];
-	if (($fname=="")|($lname=="")|(!ctype_alpha($fname))|(!ctype_alpha($lname))) { 
-		$output="Please enter the Name correctly.";
-	}
-	else if ($email=="") {
-		$output="Please enter the Email ID correctly.";
-	}
-	else if ((strlen($contn)!=10)&(strlen($contn)!=8)|(!(ctype_digit($contn)))) {
-		$output="Please enter the Contact Number correctly (8 or 10 digits)";
-	}
-	else if ((strlen($uname)>15)|($uname=="")) {
-		$output="Please enter the User Name correctly (Under 15 characters)";
-	}
-	else if ((strlen($passw)<8)|(strlen($passw)>16)) {
-		$output="Please enter the Password correctly (Between 8 to 16 characters)";
-	}
-	else {
-		$ip=$_SERVER['REMOTE_ADDR'];
-		$connect = mysqli_connect("localhost", "root", "", "SecureStorage") or die("could not select database");
-		$insertQuery="INSERT INTO User(User_Fname, User_Lname, User_email, User_Contact, User_RegDate) VALUES ('$fname','$lname','$email','$contn', NOW())";
-		mysqli_query($connect,$insertQuery);
-		$sql_val="SELECT User_ID FROM User where User_Fname='$fname' and User_Lname='$lname' and User_email='$email'";
-		$result_val=mysqli_query($connect,$sql_val);
-		$row_val = mysqli_fetch_array($result_val);
-		
-		$command = "python keyHash.py Signup ".$passw;
-		$pid = popen( $command,"r");
-		$py=fread($pid, 256);
-		$arr= explode(" ",$py);
-		$sql_login="INSERT INTO Login VALUES (".$row_val['User_ID'].",'$uname','$arr[0]', '$arr[1]')";
-		mysqli_query($connect,$sql_login);
-		$output="Verified and Added to the database";
-		
-		$_SESSION["username"] = $uname;
-		$_SESSION["userid"] = $row_val["User_ID"];
-		header('Location:index.php');		
-	}
-}
+<?php 	
+	session_start();
 ?>
 <html>
 	<head>
-		<title>Login Screen</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Sign Up Page</title>
 		<style>
-			*{font-family:Verdana;}
-			table{width:90%;text-align:left;margin:auto; color:black;}
-			input{margin-left:10px; width:85%; height:35px; border-radius: 10px;}
-			.blur{width: 50%; padding:25px 20px; background-color:white; border-radius: 25px; margin:15px auto;}
-			.signinButton{color:white; background-color:#000080; padding: 7px 10px; width:25%; border-radius: 15px;}
-			@media (min-width: 350px) and (max-width:550px)  {
-				.blur{width: 80%; margin: 15px auto;}
-				.signinButton{padding: 7px 10px; width:50%;}
-			}
+			* {font-family:Verdana; box-sizing:unset !important;}
+			label {line-height:30px;}
+			.form {width:400px; margin:auto;}
+			.form-control {width:250px !important; float:right; height:20px !important;}
+			.form-control-feedback {top:0px !important; color:orange;}
+			.blur{width: 50%; padding:25px 20px; background-color:white; border-radius: 25px; margin:35px auto;}
+			.signUpButton{color:white; background-color:#000080; width:25%; font-size:1vw; padding:2px; border-radius:15px; margin:auto;}
+			.signUpButton:hover { background-color: #6666ff;}
 		</style>
 	</head>
 	<?php include 'navbar.php'; ?>
-	<body style="background-image: linear-gradient(#000080, #6666ff, #6666ff); margin:0px; position:relative; min-height:100%;">
+	<body style="background-image: linear-gradient(#6666ff,#55AAD0); margin:0px; position:relative;">
 		<div class="blur">
-			<h1 style="color:#000080; margin:0px;"><b><center>Sign Up</center></b></h2><br>
-			<form method="post" action="signup.php">
-				<table>
-					<tr>
-						<th>First Name</th>
-						<td>:<input type="text" name="fname" placeholder="  Enter your First Name" value="<?php echo isset($_POST["fname"]) ? $_POST["fname"] : ''; ?>"></td>
-					</tr>
-					<tr>
-						<th>Last Name</th>
-						<td>:<input type="text" name="lname" placeholder="  Enter your Last Name" value="<?php echo isset($_POST["lname"]) ? $_POST["lname"] : ''; ?>"></td>
-					</tr>
-					<tr>
-						<th>Email ID</th>
-						<td>:<input type="text" name="email" placeholder="  Enter your Email ID for verification" value="<?php echo isset($_POST["email"]) ? $_POST["email"] : ''; ?>"></td>
-					</tr>
-					<tr>
-						<th>Contact No.</th>
-						<td>:<input type="text" name="cnumb" placeholder="  Enter your Contact Number" value="<?php echo isset($_POST["cnumb"]) ? $_POST["cnumb"] : ''; ?>"></td>
-					</tr>
-					<tr>
-						<th>Username</th>
-						<td>:<input type="text" name="uname" placeholder="  Enter your User Name" value="<?php echo isset($_POST["uname"]) ? $_POST["uname"] : ''; ?>"></td>
-					</tr>
-					<tr>
-						<th>Password</th>
-						<td>:<input type="password" name="pwd" placeholder="  Enter your Password" value="<?php echo isset($_POST["pwd"]) ? $_POST["pwd"] : ''; ?>"></td>
-					</tr>
-				</table><br>
-				<center><input type="submit" class="button signinButton" value="Submit" name="submit"></center>
+			<h1 style="color:#000080; margin:0px;"><b><center>Sign Up</center></b></h2><hr>
+			<form class="form" role="form">
+				<div class="form-group has-feedback" id="Fname">
+					<label>First Name</label>
+					<input type="text" class="form-control" id="inFname" placeholder="Enter your First Name">
+					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icFname"></span>
+				</div>
+				<div class="form-group has-feedback" id="Lname">
+					<label>Last Name</label>
+					<input type="text" class="form-control" id="inLname" placeholder="Enter your Last Name">
+					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icLname"></span>
+				</div>
+				<div class="form-group has-feedback" id="Uname">
+					<label>User Name</label>
+					<input type="text" class="form-control" id="inUname" placeholder="Enter your User Name">
+					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icUname"></span>
+				</div>
+				<div class="form-group has-feedback" id="Pass">
+					<label>Password</label>
+					<input type="password" class="form-control" id="inPass" placeholder="Enter your Password">
+					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icPass"></span>
+				</div>
+				<div class="form-group has-feedback" id="Email">
+					<label>Email</label>
+					<input type="text" class="form-control" id="inEmail" placeholder="Enter your Email Address">
+					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icEmail"></span>
+				</div>
+				<div class="form-group has-feedback" id="Contact">
+					<label>Contact</label>
+					<input type="text" class="form-control" id="inContact" placeholder="Enter your Contact Number">
+					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icContact"></span>
+				</div>
+				<p style="color:red; text-align:center;" id="output"></p>
+				<center><input type="button" onclick="checkSignUp()" class="signUpButton" id="submitButton" value="Submit"></center>
 			</form>
-			<p style="color:red; text-align:center;"><?php echo "$output"; ?></p>
 		</div>
-	<?php include 'footer.php'; ?>
 	</body>
+	<?php include 'footer.php'; ?>
 </html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>  
+<script>
+	function checkSignUp() {
+		$.ajax({
+			type:'post',
+			url:'Ajax/signupData.php',
+			data:{
+				Fname:document.getElementById("inFname").value,
+				Lname:document.getElementById("inLname").value,
+				Uname:document.getElementById("inUname").value,
+				Pass :document.getElementById("inPass").value,
+				Email:document.getElementById("inEmail").value,
+				Contact:document.getElementById("inContact").value,
+			},
+			success:function(data){
+				$('span').removeClass('glyphicon-asterisk');
+				$('span').removeClass('glyphicon-remove');
+				$('span').addClass('glyphicon-ok');
+				$('.form-group').removeClass('has-error');	
+				$('.form-group').addClass('has-success');
+				errors = data.split(' | ');
+				if (errors[0]=="6") {
+					document.getElementById("submitButton").disabled = true;
+					$.ajax({
+						type:'post',
+						url:'Ajax/sendMail.php',
+						data:{
+							Fname:document.getElementById("inFname").value,
+							Lname:document.getElementById("inLname").value,
+							Email:document.getElementById("inEmail").value,
+							Uname:document.getElementById("inUname").value,
+							Type :"Sign Up",
+						},
+						success:function(data){
+							window.location.href='index.php';
+						}
+					});
+				}
+				else {
+					var i;
+					for (i=0; i<(errors.length-1); i++) {
+						var inTemp="#"+errors[i];
+						var icTemp='#ic'+errors[i];
+						$(icTemp).removeClass('glyphicon-ok');
+						$(icTemp).addClass('glyphicon-remove');
+						$(inTemp).removeClass('has-success');
+						$(inTemp).addClass('has-error');
+					}
+					document.getElementById("output").innerHTML = "Please check the information you entered";
+				}
+			}
+		});
+	}	
+</script>

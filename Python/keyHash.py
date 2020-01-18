@@ -2,10 +2,14 @@ import sys
 import random
 import string
 
-saltGenString = string.ascii_letters + string.digits
-salt = ''.join(random.choice(saltGenString) for i in range(16))
+salt=''
+if (sys.argv[1]=="Login"):
+      salt=sys.argv[3]
+else:
+      saltGenString = string.ascii_letters + string.digits
+      salt = ''.join(random.choice(saltGenString) for i in range(16))
 
-password = sys.argv[1] + '0'*(16-len(sys.argv[1]))+salt
+password = sys.argv[2] + '0'*(16-len(sys.argv[2]))+salt
 
 pwdHex=[]
 temp=''
@@ -59,7 +63,7 @@ for i in range (8):
       C = int(Btemp)
       D = int(Cinit)
 
-keyBounds= string.ascii_letters + string.digits + "[@_!#$%^&*+-()<>?/\|}{~:]"
+keyBounds= string.ascii_letters + string.digits + "[@_!#$%^&*+-()<>?/\|}{~]"
 def prop (P):
       P=str(P).zfill(12)
       tempList=[]
@@ -75,4 +79,5 @@ def prop (P):
       return "".join(tempList)
 
 finalKey = prop(A)+prop(B)+prop(C)+prop(D)
+
 print(finalKey,salt)

@@ -3,8 +3,8 @@ import pyAesCrypt
 
 bufferSize = 64 * 1024
 password = "newpassword"
-fileLocation="Uploads\\"+sys.argv[2]+"."+sys.argv[3]
-fileSave="Uploads\\"+sys.argv[2]+".aes"
+fileLocation="..\\Uploads\\"+sys.argv[2]+"."+sys.argv[3]
+fileSave="..\\Uploads\\"+sys.argv[2]+".aes"
 if (sys.argv[1]=="Encrypt"):
       pyAesCrypt.encryptFile(fileLocation, fileSave, password, bufferSize)
       print("Encrypted")
