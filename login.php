@@ -1,103 +1,63 @@
-<?php 	
-session_start();	
-$output="";
-if(isset($_POST["submit"])) {
-	$ip=$_SERVER['REMOTE_ADDR'];
-	$op=0;
-	$connect = mysqli_connect("localhost", "root", "", "SecureStorage") or die("could not select database");
-	$fetchBrute=mysqli_query($connect,"SELECT Count FROM BruteForceCheck where IP_Addr='".$ip."'");
-	$rowBrute=mysqli_fetch_assoc($fetchBrute);
-	if(mysqli_num_rows($fetchBrute)!=0) {
-		if ($rowBrute['Count']>=10) {
-			$output="Your IP has been Blocked for Multiple Incorrect Login Attempts";
-		}
-		else {
-			$op=1;
-		}
-	}
-	else {
-		$op=1;
-	}
-	if ($op ==1) {
-		$uname=$_POST["username"];
-		$pass=$_POST["pass"];
-		$brute="0";
-		$fetchSalt=mysqli_query($connect,"SELECT Salt FROM Login where User_Name='".$uname."'");
-		$rowSalt=mysqli_fetch_assoc($fetchSalt);
-		if(mysqli_num_rows($fetchSalt)!=0) {
-			$command = "python keyHash.py Login ".$pass." ".$rowSalt['Salt'];
-			$pid = popen( $command,"r");
-			$py=fread($pid, 256);
-			$arr= explode(" ",$py);
-			$fetchPass=mysqli_query($connect,"SELECT Password,User_ID FROM Login where User_Name='".$uname."' and Salt='".$rowSalt['Salt']."'");
-			$rowPass=mysqli_fetch_assoc($fetchPass);
-			if(mysqli_num_rows($fetchPass)!=0) {
-				if ($rowPass['Password']==$arr[0]){
-					mysqli_query($connect,"UPDATE BruteForceCheck SET Count=0 , Timestamp=NOW() WHERE IP_Addr='".$ip."'");
-					$output="Correct Username and Password";
-					
-					$_SESSION["username"] = $uname;
-					$_SESSION["userid"] = $rowPass["User_ID"];
-					header('Location:index.php');
-				}
-				else {
-					$brute=1;
-				}
-			}
-			pclose($pid);
-		}
-		else {
-			$brute=1;
-		}
-		if ($brute==1) {
-			$fetchBrute=mysqli_query($connect,"SELECT * FROM BruteForceCheck where IP_Addr='".$ip."'");
-			$rowBrute=mysqli_fetch_assoc($fetchBrute);
-			if(mysqli_num_rows($fetchBrute)!=0) {
-				mysqli_query($connect,"UPDATE BruteForceCheck SET Count=Count+1 , Timestamp=NOW() WHERE IP_Addr='".$ip."'");
-			}
-			else {
-				mysqli_query($connect,"INSERT INTO BruteForceCheck(IP_Addr, Count, Timestamp) VALUES ('".$ip."',1,NOW())");
-			}
-			$output="Incorrect Username or Password";
-		}
-	}
-}
-?>
+<?php session_start();?>
 <html>
 	<head>
 		<title>Login Screen</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<style>
-			*{font-family:Verdana;}
-			table{width:90%;text-align:left;margin:auto; color:black;}
-			input{margin-left:10px; width:85%; height:35px; border-radius: 10px;}
-			.blur{width: 50%; padding:25px 20px; background-color:white; border-radius: 25px; margin:100px auto;}
-			.loginButton{color:white; background-color:#000080; padding: 7px 10px; width:25%; border-radius: 15px;}
-			@media (min-width: 350px) and (max-width:550px)  {
-				.blur{width: 80%; margin: 50px auto;}
-				.loginButton{padding: 7px 10px; width:50%;}
-			}
+			* {font-family:Verdana; box-sizing:unset !important;}
+			label {line-height:30px;}
+			.form {width:400px; margin:auto;}
+			.form-control {width:250px !important; float:right; height:20px !important;}
+			.form-control-feedback {top:0px !important; color:orange;}
+			.blur{width: 50%; padding:25px 20px; background-color:white; border-radius: 25px; margin:auto;}
+			.loginButton{color:white; background-color:#000080; width:25%; font-size:1vw; padding:2px; border-radius:15px; margin:auto;}
+			.loginButton:hover { background-color: #6666ff;}
 		</style>
 	</head>
 	<?php include 'navbar.php'; ?>
-	<body style="background-image: linear-gradient(#000080, #6666ff, #6666ff); margin:0px; position:relative; min-height:100%;">
-		<div class="blur">
-			<h1 style="color:#000080; margin:0px;"><b><center>Login</center></b></h2><br>
-			<form method="post" action="login.php">
-				<table>
-					<tr>
-						<th>Username</th>
-						<td>:<input type="text" name="username" placeholder="  Enter User Name"></td>
-					</tr>
-					<tr>
-						<th>Password</th>
-						<td>:<input type="password" name="pass" id="password" placeholder="  Enter Password"></td>
-					</tr>
-				</table><br>
-				<center><input type="submit" class="button loginButton" value="Submit" name="submit"></center>
-			</form>
-			<p style="color:red; text-align:center;"><?php echo "$output"; ?></p>
+	<body style="background-image: linear-gradient(#6666ff,#55AAD0); margin:0px; position:relative;">
+		<div style="height:40%; padding:9.5% 0%;">
+			<div class="blur">
+				<h1 style="color:#000080; margin:0px;"><b><center>Log In</center></b></h2><hr>
+				<form class="form" role="form">
+					<div class="form-group" id="Uname">
+						<label>User Name</label>
+						<input type="text" class="form-control" id="inUname" placeholder="Enter your User Name">
+					</div>
+					<div class="form-group" id="Pass">
+						<label>Password</label>
+						<input type="password" class="form-control" id="inPass" placeholder="Enter your Password">
+					</div>
+					<p style="color:red; text-align:center;" id="output"></p>
+					<center><input type="button" onclick="checkLogin()" class="loginButton" id="loginButton" value="Submit"></center>
+				</form>
+			</div>
 		</div>
 	<?php include 'footer.php'; ?>
 	</body>
 </html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>  
+<script>
+	function checkLogin() {
+		$.ajax({
+			type:'post',
+			url:'Ajax/loginData.php',
+			data:{
+				Uname:document.getElementById("inUname").value,
+				Pass :document.getElementById("inPass").value,
+			},
+			success:function(data){
+				output=data.split(' | ');
+				if (output[1]=="1")
+					window.location.href='index.php';
+				else
+					document.getElementById("output").innerHTML = output[0];
+			}
+		});
+	}
+</script>
