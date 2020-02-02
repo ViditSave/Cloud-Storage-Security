@@ -1,7 +1,8 @@
 <?php 
 	session_start();	
 	$output="";
-
+	$file="ajax";
+	include '../includeAll.php';
 	if(isset($_POST['Fname']) & isset($_POST['Lname']) & isset($_POST['Email']) & isset($_POST['Contact']) & isset($_POST['Uname']) & isset($_POST['Pass'])) {
 		$fname=$_POST["Fname"];
 		$lname=$_POST["Lname"];
@@ -38,17 +39,16 @@
 			echo $output;
 		else {
 			$ip=$_SERVER['REMOTE_ADDR'];
-			$connect = mysqli_connect("localhost", "root", "", "SecureStorage") or die("could not select database");
-			$insertQuery="INSERT INTO User(User_Fname, User_Lname, User_email, User_Contact, User_RegDate) VALUES ('$fname','$lname','$email','$contn', NOW())";
+			$insertQuery="INSERT INTO user(User_Fname, User_Lname, User_email, User_Contact, User_RegDate) VALUES ('$fname','$lname','$email','$contn', NOW())";
 			mysqli_query($connect,$insertQuery);
-			$sql_val="SELECT User_ID FROM User where User_Fname='$fname' and User_Lname='$lname' and User_email='$email'";
+			$sql_val="SELECT User_ID FROM user where User_Fname='$fname' and User_Lname='$lname' and User_email='$email'";
 			$result_val=mysqli_query($connect,$sql_val);
 			$row_val = mysqli_fetch_array($result_val);
 			$command = "python ../Python/keyHash.py Signup ".$passw;
 			$pid = popen( $command,"r");
 			$py=fread($pid, 256);
 			$arr= explode(" ",$py);
-			$sql_login="INSERT INTO Login VALUES (".$row_val['User_ID'].",'$uname','$arr[0]', '$arr[1]')";
+			$sql_login="INSERT INTO login VALUES (".$row_val['User_ID'].",'$uname','$arr[0]', '$arr[1]')";
 			mysqli_query($connect,$sql_login);
 			$_SESSION["username"] = $uname;
 			$_SESSION["userid"] = $row_val["User_ID"];

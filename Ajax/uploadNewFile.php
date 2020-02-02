@@ -1,5 +1,7 @@
 <?php 	
 	session_start();
+	$file="ajax";
+	include '../includeAll.php';
 	if (isset($_SESSION["username"]) & isset($_SESSION["userid"])) {
 		$output="";
 		if(!empty($_FILES['uploaded_file']))
@@ -12,8 +14,7 @@
 				$pid = popen( $command,"r");
 				$py=fread($pid, 256);
 				unlink($path);
-				$connect = mysqli_connect("localhost", "root", "", "SecureStorage");
-				mysqli_query($connect,"INSERT INTO Document(Doc_Name, Doc_Extension, User_ID,Timestamp) VALUES ('".$ext[0]."','".$ext[1]."','".$_SESSION["userid"]."',NOW())");
+				mysqli_query($connect,"INSERT INTO document(Doc_Name, Doc_Extension, User_ID,Timestamp) VALUES ('".$ext[0]."','".$ext[1]."','".$_SESSION["userid"]."',NOW())");
 				$output=  "The file ".$name." has been uploaded";
 			} 
 			else
