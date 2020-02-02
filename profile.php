@@ -1,5 +1,6 @@
-<?php
+<?php 	
 	session_start();
+	include 'includeAll.php';
 	if (!(isset($_SESSION["username"])&isset($_SESSION["userid"])))
 		header('Location:index.php');
 	else { 
@@ -10,7 +11,7 @@
 				<style>
 					*{font-family:Verdana; box-sizing:unset !important;}
 					.secTable{width:22.5%; padding:0% 0.75%; margin:0px 0.5% 10px 4%; float:left;}
-					.secTableData{background-color:white; border-radius:10px; margin-bottom:5px; font-size:2rem; padding:10px 25px; cursor: pointer;}
+					.secTableData{background-color:white; border-radius:10px; margin-bottom:5px; font-size:1.25rem; padding:10px 25px; cursor: pointer;}
 					.secMain {width:65%; padding:2% 0.75%; border-radius:10px; margin:0px 4% 20px 0.5%; float:right; background-color:white;}
 					.uploadedFiles{width:90% !important; margin:25px auto;}
 					.hideDivision{display:none;}
@@ -32,11 +33,10 @@
 						<div id="User_Info" class="tab1">
 							<h1 style="color:#000080; margin:0px;"><b><center>User Information</center></b></h1><hr>
 							<?php
-								$connect = mysqli_connect("localhost", "root", "", "SecureStorage");
-								$query1 = "SELECT * FROM User where User_ID='".$_SESSION['userid']."'";
+								$query1 = "SELECT * FROM user where User_ID='".$_SESSION['userid']."'";
 								$result1= mysqli_query($connect, $query1);
 								$row1	= mysqli_fetch_array($result1);
-								$query2 = "SELECT Count(Doc_ID) FROM Document where User_ID='".$_SESSION['userid']."'";
+								$query2 = "SELECT Count(Doc_ID) FROM document where User_ID='".$_SESSION['userid']."'";
 								$result2= mysqli_query($connect, $query2);
 								$row2	= mysqli_fetch_array($result2);
 								echo '
@@ -71,6 +71,24 @@
 						
 						<div id="Sent_Requests" class="tab4 hideDivision">
 							<h1 style="color:#000080; margin:0px;"><b><center>Requests You Sent</b></h1><hr>
+							<?php
+								$query = "SELECT Doc_ID, Timestamp FROM requestdocument WHERE User_ID='".$_SESSION['userid']."'";
+								$result = mysqli_query($connect, $query);
+								if(mysqli_num_rows($result)==0)
+									echo "You don't have read privileges to any files";
+								else {
+									$count=1;
+									while($row = mysqli_fetch_array($result)) {
+										$result1 = mysqli_query($connect, "SELECT Doc_Name,Doc_Extension FROM document WHERE Doc_ID=".$row['Doc_ID']);
+										$row1 = mysqli_fetch_array($result1);
+										echo  '
+										<div style="width:80%; height:70px; margin:2% 5%; border:1px solid #000080; padding:2% 5%; border-radius:10px;">
+											<label>Document Name&emsp; : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</label><br>
+											<label>Request Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label>
+										</div>';
+									}
+								}
+							?>
 						</div>
 						
 						<div id="Access_Requests" class="tab5 hideDivision">
@@ -80,7 +98,7 @@
 						<div id="Granted_Access" class="tab6 hideDivision">
 							<h1 style="color:#000080; margin:0px;"><b><center>Accessible Files</center></b></h1><hr>
 							<?php
-								$query = "SELECT Doc_ID, Access_Expiry FROM AccessDocument WHERE User_Name='".$_SESSION['username']."'";
+								$query = "SELECT Doc_ID, Access_Expiry FROM accessdocument WHERE User_Name='".$_SESSION['username']."'";
 								$result = mysqli_query($connect, $query);
 								if(mysqli_num_rows($result)==0)
 									echo "You don't have read privileges to any files";
@@ -89,7 +107,7 @@
 									while($row = mysqli_fetch_array($result)) {
 										$result1 = mysqli_query($connect, "SELECT Doc_Name,Doc_Extension,User_ID FROM document WHERE Doc_ID=".$row['Doc_ID']);
 										$row1 = mysqli_fetch_array($result1);
-										$result2 = mysqli_query($connect, "SELECT User_Name FROM User WHERE User_ID=".$row1['User_ID']);
+										$result2 = mysqli_query($connect, "SELECT User_Name FROM user WHERE User_ID=".$row1['User_ID']);
 										$row2 = mysqli_fetch_array($result2);
 										echo '<div class="head'.$count.'" style="background-color:#6666FF; color:white; padding:10px; cursor:pointer; font-weight:bold; margin:15px; padding:20px;">
 												<div style="width:7.5%; display:inline-block;">'.$count.'.</div>
@@ -125,10 +143,6 @@
 		</html>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>  
 		<script>
 			function changeTab(selectedTab){
 				for (i=1; i<=6; i++) {

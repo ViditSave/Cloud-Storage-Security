@@ -1,11 +1,12 @@
 <?php
-	session_start();
+ 	session_start();
+	include 'includeAll.php';
 	$inputOrder="Doc_Name";
-	if(isset($_GET['Order']))
-      $inputOrder= $_GET['Order'];
 	$sortDisp="";
-	
-	
+	if(isset($_GET['Order'])) {
+		$inputOrder= $_GET['Order'];
+		$sortDisp= $_GET['Order'];
+	}
 ?>
 <html>
 	<head>
@@ -33,8 +34,8 @@
 				</div>
 				<div class="secTableData" onclick="showSort()"> Sort Documents : <?php echo $sortDisp; ?>
 					<div class="form-group has-feedback hideDivision" style="margin:15px;" id="changeSort">
-						<div class="secTableData inSort" onclick="changeOrder('Doc_Name')">File Name Asc</div>
-						<div class="secTableData inSort" onclick="changeOrder('Doc_Name DESC')">File Name Desc</div>
+						<div class="secTableData inSort" onclick="changeOrder('Doc_Name')">Document Name Asc</div>
+						<div class="secTableData inSort" onclick="changeOrder('Doc_Name DESC')">Document Name Desc</div>
 						<div class="secTableData inSort" onclick="changeOrder('Doc_Extension')">File Type Asc</div>
 						<div class="secTableData inSort" onclick="changeOrder('Doc_Extension DESC')">File Type Desc</div>
 						<div class="secTableData inSort" onclick="changeOrder('User_Fname')">Uploader Name Asc</div>
@@ -47,24 +48,40 @@
 			<div class="secMain">
 				<div>
 					<?php
-						$connect = mysqli_connect("localhost", "root", "", "SecureStorage");
-						$query = "SELECT User_Fname, User_Lname, Doc_Name, Doc_Extension, Timestamp FROM User, Document where Document.User_ID = User.User_ID ORDER BY ".$inputOrder;
+						$query = "SELECT User_Fname, User_Lname, Doc_ID, Doc_Name, Doc_Extension, Timestamp FROM user, document where document.User_ID = user.User_ID ORDER BY ".$inputOrder;
 						$result= mysqli_query($connect, $query);
 						$count=1;
 						while($row = mysqli_fetch_array($result)) {
 							echo '
-							<div style="width:70%; height:70px; margin:2% 5%; border:1px solid #000080; padding:2% 10%; border-radius:10px;">
-								<div style="width:30%; display:inline-block;">
-									<label>Document Name</label><br>
-									<label>Uploader ID</label><br>
-									<label>Upload Time</label><br>
+							<div style="width:80%; height:70px; margin:2% 5%; border:1px solid #000080; padding:2% 5%; border-radius:10px;">
+								<div class="container">
+									<div class="row">
+										<div class="col-2" style=" background-color:red; height:10px;">
+											<span>';
+										if ($row['Doc_Extension']=="pdf")
+											echo '<i class="fas fa-file-pdf"></i>';
+										else if ($row['Doc_Extension']=="xlsx")
+											echo '<i class="fas fa-file-excel"></i>';
+										else
+											echo '<i class="fas fa-file-alt"></i>';
+										echo '</span>
+										</div>
+										<div class="col-6" style=" background-color:green; height:10px;">
+											<label>Document Name&emsp;: '.$row['Doc_Name'].'.'.$row['Doc_Extension'].'</label><br>
+											<label>Uploader ID &emsp; &emsp; &nbsp;: '.$row['User_Fname'].' '.$row['User_Lname'].'</label><br>
+											<label>Upload Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label><br>
+										</div>
+										<div class="col-2" style=" background-color:cyan; height:10px;">';
+										$action="";
+										if (!(isset($_SESSION["username"])&isset($_SESSION["userid"])))
+											$action="window.location.href ='login.php';";
+										else
+											$action="alterUser('Request','".$_SESSION["userid"]."','".$row['Doc_ID']."')";
+										echo '
+											<span class="glyphicon glyphicon-remove" onclick="'.$action.'">Request Access</span>
+										</div>
+									</div>
 								</div>
-								<div style="width:50%; display:inline-block;">
-									<label>: '.$row['Doc_Name'].'.'.$row['Doc_Extension'].'</label><br>
-									<label>: '.$row['User_Fname'].' '.$row['User_Lname'].'</label><br>
-									<label>: '.date('d M, Y',strtotime($row['Timestamp'])).'</label><br>
-								</div>
-								<div style="width:58px; height:58px; margin:0.5%; background-color:cyan; display:inline-block; position:absolute; float:right;"><span>'.$row['Doc_Extension'].'</span></div>
 							</div>';
 						}
 					?>
@@ -76,10 +93,6 @@
 <?php include 'footer.php'; ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>  
 <script>
 	function showSort() {
 		const element = document.querySelector('#changeSort');
@@ -94,5 +107,19 @@
 	}
 	function changeOrder(selectedType) {
 		window.location = "search.php?Order="+selectedType;
+	}
+	function alterUser(type,userID,documentID) {
+		$.ajax({
+			type:'post',
+			url:'Ajax/alterUserAccess.php',
+			data:{ 
+				Uname:userID,
+				DocID:documentID,
+				Type:type,
+			},
+			success:function(data){
+				alert("Request Sent");
+			}
+		});
 	}
 </script>
