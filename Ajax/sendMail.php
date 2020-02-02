@@ -21,10 +21,10 @@
 			$mail->SMTPAuth   = TRUE;
 			$mail->SMTPSecure = "tls";
 			$mail->Port       = 587;
-			$mail->Host       = "smtp.gmail.com";
-			$mail->Username   = "viditsave@gmail.com";
-			$mail->Password   = "ViditVirajSave123$";
-			$mail->setFrom('viditsave@gmail.com', 'Secure Share');
+			$mail->Host       = "mail.messagingengine.com";
+			$mail->Username   = "secure_store@ssl-mail.com";
+			$mail->Password   = "securestore";
+			$mail->setFrom('secure_store@ssl-mail.com', 'Secure Store');
 
 			$mail->IsHTML(true);
 			$mail->AddAddress($emailAddr, $fullName);
