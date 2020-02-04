@@ -16,14 +16,14 @@
 		<a id="home" href="index.php" style="line-height:10px;">Secure Storage</a>
 	</div>
 	<div style="float:right; margin-right:20px;">
-	<button class="buttonView" onclick="window.location.href='search.php'"><span class="glyphicon glyphicon-search" style="margin-right:10px;"></span>Search</button>
 	<?php
 		if (isset($_SESSION["username"])&isset($_SESSION["userid"]))
-			echo '<button class="buttonView" onclick="window.location.href=\'profile.php\'"><span class="glyphicon glyphicon-user" style="margin-right:10px;"></span>Profile</button>
-				  <button class="buttonView" onclick="window.location.href=\'logout.php\'"><span class="glyphicon glyphicon-remove" style="margin-right:10px;"></span>Logout</button>';
+			echo '<button class="buttonView" onclick="window.location.href=\'search.php\'"><span class="glyphicon glyphicon-search" style="margin-right:10px;"></span>Search</button>
+			<button class="buttonView" onclick="window.location.href=\'profile.php\'"><span class="glyphicon glyphicon-user" style="margin-right:10px;"></span>Profile</button>
+			<button class="buttonView" onclick="window.location.href=\'logout.php\'"><span class="glyphicon glyphicon-remove" style="margin-right:10px;"></span>Logout</button>';
 		else
 			echo '<button class="buttonView" onclick="window.location.href=\'login.php\'"><span class="glyphicon glyphicon-lock" style="margin-right:10px;"></span>Login</button>
-				  <button class="buttonView" onclick="window.location.href=\'signup.php\'"><span class="glyphicon glyphicon-user" style="margin-right:10px;"></span>Signup</button>';
+			<button class="buttonView" onclick="window.location.href=\'signup.php\'"><span class="glyphicon glyphicon-user" style="margin-right:10px;"></span>Signup</button>';
 	?>
 	</div>
 </div>

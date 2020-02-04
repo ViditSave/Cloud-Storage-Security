@@ -3,13 +3,14 @@ import pyAesCrypt
 
 bufferSize = 64 * 1024
 password = "newpassword"
-fileLocation="..\\Uploads\\"+sys.argv[2]+"."+sys.argv[3]
-fileSave="..\\Uploads\\"+sys.argv[2]+".aes"
 if (sys.argv[1]=="Encrypt"):
+      fileLocation="..\\Uploads\\"+sys.argv[2]+"."+sys.argv[3]
+      fileSave="..\\Uploads\\"+sys.argv[2]+".aes"
       pyAesCrypt.encryptFile(fileLocation, fileSave, password, bufferSize)
       print("Encrypted")
-'''
-else:
-      pyAesCrypt.decryptFile("aes\data.txt.aes", "aes\dataout.txt", password, bufferSize)
+
+elif (sys.argv[1]=="Decrypt"):
+      fileLocation="..\\Uploads\\"+sys.argv[2]+".aes"
+      fileSave="..\\Uploads\\tempDecrypted\\"+sys.argv[2]+"."+sys.argv[3]
+      pyAesCrypt.decryptFile(fileLocation, fileSave, password, bufferSize)
       print("Decrypted")
-'''

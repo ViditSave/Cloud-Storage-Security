@@ -20,7 +20,7 @@
 						<div style="width:90%; margin:10px auto; padding:10px; border:1px solid #00000000;">						
 							<label style="width:25%; float:left; line-height:32.5px;">Insert a New User:</label>
 							<input type="button" onclick="alterUser(\'Grant\',\'inUname'.$count.'\','.$row['Doc_ID'].')" value="&check;" style="width:26px; height:26px; margin:1px 0px; float:right; border-radius:50%; border:2px solid #000080; color:#000080; background-color:white;">
-							<input type="text" class="form-control" id="inUname'.$count.'" placeholder="Enter User Name To Grant Access" style="width:50%; height:20px; margin:0px auto;">
+							<input class="form-control" id="inUname'.$count.'" placeholder="Enter User Name To Grant Access" style="width:50%; height:20px; margin:0px auto;">
 						</div><hr>';
 						$queryAccess = "SELECT Access_Expiry,User_Name FROM accessdocument WHERE Doc_ID='".$row['Doc_ID']."'";
 						$resultAccess = mysqli_query($connect, $queryAccess);

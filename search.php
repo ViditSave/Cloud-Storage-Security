@@ -1,5 +1,7 @@
 <?php
  	session_start();
+	if (!(isset($_SESSION["username"])&isset($_SESSION["userid"])))
+		header('Location:login.php');
 	include 'includeAll.php';
 	$inputOrder="Doc_Name";
 	$sortDisp="";
@@ -14,12 +16,13 @@
 		<style>
 			*{font-family:Verdana; box-sizing:unset !important;}
 			.secTable{width:25%; padding:0% 0.75%; margin:0px 0.5% 10px 4%; float:left;}
-			.secTableData{background-color:white; border-radius:10px; margin-bottom:5px; font-size:1.5rem; padding:10px 25px; cursor: pointer;}
-			.inSort{width:75%; margin:5px auto; border:2px solid #ccc; padding:5px 10px; font-size:1rem;}
+			.secTableData{background-color:white; border-radius:10px; margin-bottom:5px; font-size:1.25rem; padding:10px 25px; cursor: pointer;}
+			.inSort{width:auto; margin:5px auto; border:2px solid #ccc; padding:5px 10px; font-size:1rem;}
 			.secMain {width:62.5%; padding:2% 0.75%; border-radius:10px; margin:0px 4% 20px 0.5%; float:right; background-color:white;}
 			.uploadedFiles{width:90% !important; margin:25px auto;}
 			.hideDivision{display:none;}
 			.showDivision{display:block;}
+			label {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width:375px;}
 		</style>
 	</head>
 	<?php $isSearchPage=1; include 'navbar.php'; ?>
@@ -28,7 +31,16 @@
 			<div class="secTable">
 				<div class="secTableData">Search Document : 
 					<div class="form-group has-feedback" style="margin:0px;">
-						<input type="text" class="form-control" id="inDname" placeholder="Enter Document Name" style="width:75%; display:inline-block; height:20px; margin:10px 0px;">
+						<input list="fileNames" type="text" class="form-control" id="inDname" placeholder="Enter Document Name" style="width:75%; display:inline-block; height:20px; margin:10px 0px;">
+						<datalist id="fileNames">
+						<?php 
+							$queryName = "SELECT Doc_Name, Doc_Extension FROM user, document where document.User_ID = user.User_ID and user.User_ID not in (".$_SESSION["userid"].")";
+							$resultName= mysqli_query($connect, $queryName);
+							while($rowName = mysqli_fetch_array($resultName)) {
+								echo '<option value="'.$rowName['Doc_Name'].'.'.$rowName['Doc_Extension'].'">';
+							}
+						?>
+						</datalist>
 						<span class="glyphicon glyphicon-search form-control-feedback" style="margin:10px;"></span>
 					</div>
 				</div>
@@ -48,37 +60,42 @@
 			<div class="secMain">
 				<div>
 					<?php
-						$query = "SELECT User_Fname, User_Lname, Doc_ID, Doc_Name, Doc_Extension, Timestamp FROM user, document where document.User_ID = user.User_ID ORDER BY ".$inputOrder;
+						$query = "SELECT User_Fname, User_Lname, Doc_ID, Doc_Name, Doc_Extension, Timestamp, document.User_ID FROM user, document where document.User_ID = user.User_ID and user.User_ID not in (".$_SESSION["userid"].") ORDER BY ".$inputOrder;
 						$result= mysqli_query($connect, $query);
 						$count=1;
 						while($row = mysqli_fetch_array($result)) {
 							echo '
-							<div style="width:80%; height:70px; margin:2% 5%; border:1px solid #000080; padding:2% 5%; border-radius:10px;">
+							<div style="width:80%; height:80px; margin:2% 5%; border:2.5px solid #000080; padding:2% 5%; border-radius:10px;">
 								<div class="container">
 									<div class="row">
-										<div class="col-2" style=" background-color:red; height:10px;">
+										<div class="col-1">
 											<span>';
-										if ($row['Doc_Extension']=="pdf")
-											echo '<i class="fas fa-file-pdf"></i>';
-										else if ($row['Doc_Extension']=="xlsx")
-											echo '<i class="fas fa-file-excel"></i>';
-										else
-											echo '<i class="fas fa-file-alt"></i>';
-										echo '</span>
+												if ($row['Doc_Extension']=="pdf")										{$imgType="PDF";}
+												else if ($row['Doc_Extension']=="xlsx")									{$imgType="EXCEL";}
+												else if ($row['Doc_Extension']=="mp4")									{$imgType="VIDEO";}
+												else if ($row['Doc_Extension']=="doc")									{$imgType="WORD";}
+												else if ($row['Doc_Extension']=="png" | $row['Doc_Extension']=='gif')	{$imgType="IMAGE";}
+												else if ($row['Doc_Extension']=="txt")									{$imgType="TEXT";}
+												else																	{$imgType="FILE";}
+												echo '<img src="Images/SearchImages/'.$imgType.'.png" height="80px">
+											</span>
 										</div>
-										<div class="col-6" style=" background-color:green; height:10px;">
+										<div class="col-7" style="margin:0px 10px;">
 											<label>Document Name&emsp;: '.$row['Doc_Name'].'.'.$row['Doc_Extension'].'</label><br>
-											<label>Uploader ID &emsp; &emsp; &nbsp;: '.$row['User_Fname'].' '.$row['User_Lname'].'</label><br>
+											<label>Uploader Name&emsp; &nbsp;: '.$row['User_Fname'].' '.$row['User_Lname'].'</label><br>
 											<label>Upload Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label><br>
 										</div>
-										<div class="col-2" style=" background-color:cyan; height:10px;">';
-										$action="";
-										if (!(isset($_SESSION["username"])&isset($_SESSION["userid"])))
-											$action="window.location.href ='login.php';";
-										else
-											$action="alterUser('Request','".$_SESSION["userid"]."','".$row['Doc_ID']."')";
-										echo '
-											<span class="glyphicon glyphicon-remove" onclick="'.$action.'">Request Access</span>
+										<div class="col-1">';
+											$queryReq = "SELECT Request_ID FROM requestdocument WHERE User_ID='".$_SESSION["userid"]."' and Doc_ID='".$row['Doc_ID']."'";
+											$resultReq= mysqli_query($connect, $queryReq);
+											if(mysqli_num_rows($resultReq)==0) {
+												$action="alterUser('Request','".$_SESSION["userid"]."','".$row['Doc_ID']."','".$row['User_ID']."')";
+												echo '<span class="" onclick="'.$action.'">Request Access</span>';
+											}
+											else {
+												echo '<span class="">Access Requested Already</span>';
+											}
+										echo'
 										</div>
 									</div>
 								</div>
@@ -108,13 +125,14 @@
 	function changeOrder(selectedType) {
 		window.location = "search.php?Order="+selectedType;
 	}
-	function alterUser(type,userID,documentID) {
+	function alterUser(type,userID,documentID,ownerID) {
 		$.ajax({
 			type:'post',
 			url:'Ajax/alterUserAccess.php',
 			data:{ 
 				Uname:userID,
 				DocID:documentID,
+				OwnerID:ownerID,
 				Type:type,
 			},
 			success:function(data){

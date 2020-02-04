@@ -36,20 +36,52 @@
 								$query1 = "SELECT * FROM user where User_ID='".$_SESSION['userid']."'";
 								$result1= mysqli_query($connect, $query1);
 								$row1	= mysqli_fetch_array($result1);
+								
 								$query2 = "SELECT Count(Doc_ID) FROM document where User_ID='".$_SESSION['userid']."'";
 								$result2= mysqli_query($connect, $query2);
 								$row2	= mysqli_fetch_array($result2);
+								
+								$query3 = "SELECT Count(Doc_ID) FROM accessdocument WHERE User_Name='".$_SESSION['username']."'";
+								$result3= mysqli_query($connect, $query3);
+								$noAccessible=0;
+								if(mysqli_num_rows($result3)!=0) {
+									$row3 = mysqli_fetch_array($result3);
+									$noAccessible = $row3['Count(Doc_ID)'];
+								}
+								
+								$query4 = "SELECT Count(Doc_ID) FROM requestdocument WHERE User_ID='".$_SESSION['userid']."'";
+								$result4= mysqli_query($connect, $query4);
+								$noReqSent=0;
+								if(mysqli_num_rows($result4)!=0) {
+									$row4 = mysqli_fetch_array($result4);
+									$noReqSent = $row4['Count(Doc_ID)'];
+								}
+								
+								$query5 = "SELECT Count(Doc_ID) FROM requestdocument WHERE Owner_ID='".$_SESSION['userid']."'";
+								$result5= mysqli_query($connect, $query5);
+								$noAccessRequests=0;
+								if(mysqli_num_rows($result5)!=0) {
+									$row5 = mysqli_fetch_array($result5);
+									$noAccessRequests = $row5['Count(Doc_ID)'];
+								}
+								
 								echo '
 								<div style="width:70%; margin:5% 15%;">
 									<div style="width:50%; float:left;">
 										<label>Full Name</label><br>
 										<label>Email ID</label><br>
 										<label>No. of Documents Uploaded</label><br>
+										<label>No. of Documents Accessible</label><br>
+										<label>No. of Document Requests Sent</label><br>
+										<label>No. of Access Requests Recieved</label><br>
 									</div>
 									<div style="width:50%; float:right;">
 										<label>: '.$row1['User_Fname'].' '.$row1['User_Lname'].'</label><br>
 										<label>: '.$row1['User_email'].'</label><br>
 										<label>: '.$row2['Count(Doc_ID)'].'</label><br>
+										<label>: '.$noAccessible.'</label><br>
+										<label>: '.$noReqSent.'</label><br>
+										<label>: '.$noAccessRequests.'</label><br>
 									</div>
 								</div>';
 							?>
@@ -75,7 +107,7 @@
 								$query = "SELECT Doc_ID, Timestamp FROM requestdocument WHERE User_ID='".$_SESSION['userid']."'";
 								$result = mysqli_query($connect, $query);
 								if(mysqli_num_rows($result)==0)
-									echo "You don't have read privileges to any files";
+									echo "You have not requested privileges to any files";
 								else {
 									$count=1;
 									while($row = mysqli_fetch_array($result)) {
@@ -93,6 +125,27 @@
 						
 						<div id="Access_Requests" class="tab5 hideDivision">
 							<h1 style="color:#000080; margin:0px;"><b><center>Give Access</b></h1><hr>
+							<?php
+								$query = "SELECT Doc_ID, Timestamp, User_ID FROM requestdocument WHERE Owner_ID='".$_SESSION['userid']."'";
+								$result = mysqli_query($connect, $query);
+								if(mysqli_num_rows($result)==0)
+									echo "You do not have any access requests";
+								else {
+									$count=1;
+									while($row = mysqli_fetch_array($result)) {
+										$result1 = mysqli_query($connect, "SELECT Doc_ID, Doc_Name,Doc_Extension FROM document WHERE Doc_ID=".$row['Doc_ID']);
+										$row1 = mysqli_fetch_array($result1);
+										$result2 = mysqli_query($connect, "SELECT User_Name FROM user WHERE User_ID=".$row['User_ID']);
+										$row2 = mysqli_fetch_array($result2);
+										echo  '
+										<div style="width:80%; height:70px; margin:2% 5%; border:1px solid #000080; padding:2% 5%; border-radius:10px;">
+											<label>Document Name&emsp; : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</label><br>
+											<label>Request Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label>
+											<input type="button" onclick="alterUser(\'GiveAccess\',\''.$row2['User_Name'].'\','.$row1['Doc_ID'].')" value="&check;" style="width:26px; height:26px; margin:1px 0px; float:right; border-radius:50%; border:2px solid #000080; color:#000080; background-color:white;">
+										</div>';
+									}
+								}
+							?>
 						</div>
 						
 						<div id="Granted_Access" class="tab6 hideDivision">
@@ -105,11 +158,11 @@
 								else {
 									$count=1;
 									while($row = mysqli_fetch_array($result)) {
-										$result1 = mysqli_query($connect, "SELECT Doc_Name,Doc_Extension,User_ID FROM document WHERE Doc_ID=".$row['Doc_ID']);
+										$result1 = mysqli_query($connect, "SELECT Doc_ID, Doc_Name,Doc_Extension,User_ID FROM document WHERE Doc_ID=".$row['Doc_ID']);
 										$row1 = mysqli_fetch_array($result1);
 										$result2 = mysqli_query($connect, "SELECT User_Name FROM user WHERE User_ID=".$row1['User_ID']);
 										$row2 = mysqli_fetch_array($result2);
-										echo '<div class="head'.$count.'" style="background-color:#6666FF; color:white; padding:10px; cursor:pointer; font-weight:bold; margin:15px; padding:20px;">
+										echo '<div class="head'.$count.'" style="background-color:#6666FF; color:white; padding:10px; cursor:pointer; font-weight:bold; margin:15px; padding:20px;" onclick="accessFile(\''.$row['Doc_ID'].'\')">
 												<div style="width:7.5%; display:inline-block;">'.$count.'.</div>
 												<div style="width:40%; display:inline-block;">File Name : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</div>
 												<div style="width:40%; display:inline-block; float:right;">File Owner : '.$row2['User_Name'].'</div>
@@ -122,22 +175,19 @@
 						</div>
 					</div>
 				</div>
-			<div class="modal fade" id="QRModal" role="dialog">
-				<div class="modal-dialog">
-				  <div class="modal-content">
-					<div class="modal-header">
-					  <button type="button" class="close" data-dismiss="modal">&times;</button>
-					  <h4 class="modal-title">Modal Header</h4>
-					</div>
-					<div class="modal-body">
-						<img src='Images/QRcodes/50user123.png' style='width:120px; height:120px;'>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			
+				<div class="modal" id="myModal" style="width:90%; height:92%; margin:1.5% 5%; overflow:none;">
+				  <div class="modal-dialog" style="max-width:initial; width:80%; margin:0px 10%;">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h4 class="modal-title"></h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					  </div>
+					  <div class="modal-body" id="showDataModal"></div>
 					</div>
 				  </div>
 				</div>
-			</div>
+				
 			<?php include 'footer.php'; ?>
 			</body>	
 		</html>
@@ -188,10 +238,36 @@
 					success:function(data){
 						if (type!="QRcode")
 							changeTab('.tab2');
-						else
-							$("#QRModal").modal();
+						else {
+							$("#myModal").modal();
+							document.getElementById("showDataModal").innerHTML = data;
+							$(".modal-title").text("Share QR Code");
+						}
 					}
 				});
+			}
+			
+			function accessFile(docID) {
+				$.ajax({
+					type:'post',
+					url:'Ajax/viewUploadedFile.php',
+					data:{ DocID:docID, },
+					success:function(data){
+						var result=data.split('|||||');
+						$(".modal-title").text(result[0]);
+						$("#myModal").modal();
+						document.getElementById("showDataModal").innerHTML = result[1];
+						setTimeout(() => { 
+							$.ajax({
+								type:'post',
+								url:'Ajax/viewUploadedFile.php',
+								data:{ fileName:result[0], },
+								success:function(data){}
+							});
+						}, 5000);
+					}
+				});
+				
 			}
 			
 			$(document).ready(function (e) {
