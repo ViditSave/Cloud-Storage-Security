@@ -15,17 +15,17 @@
 		<title>Search Page</title>
 		<style>
 			*{font-family:Verdana; box-sizing:unset !important;}
-			.secTable{width:25%; padding:0% 0.75%; margin:0px 0.5% 10px 4%; float:left;}
+			.secTable{width:21%; padding:0% 0.75%; margin:0px 0.5% 10px 4%; float:left;}
 			.secTableData{background-color:white; border-radius:10px; margin-bottom:5px; font-size:1.25rem; padding:10px 25px; cursor: pointer;}
 			.inSort{width:auto; margin:5px auto; border:2px solid #ccc; padding:5px 10px; font-size:1rem;}
-			.secMain {width:62.5%; padding:2% 0.75%; border-radius:10px; margin:0px 4% 20px 0.5%; float:right; background-color:white;}
+			.secMain {width:67%; padding:2% 0.75%; border-radius:10px; margin:0px 4% 20px 0.5%; float:right; background-color:white;}
 			.uploadedFiles{width:90% !important; margin:25px auto;}
 			.hideDivision{display:none;}
 			.showDivision{display:block;}
 			label {white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width:375px;}
+			.reqButton {margin-top: 20px;display: block;border-radius: 15px;border: 1px solid;padding: 5px 20px; cursor:pointer;}
 		</style>
 	</head>
-	<?php $isSearchPage=1; include 'navbar.php'; ?>
 	<body style="background-image: linear-gradient(#6666ff,#55AAD0); margin:0px; position:relative;">		
 		<div style="min-height:55%; width:1200px; margin:55px auto 0px auto">
 			<div class="secTable">
@@ -45,7 +45,7 @@
 					</div>
 				</div>
 				<div class="secTableData" onclick="showSort()"> Sort Documents : <?php echo $sortDisp; ?>
-					<div class="form-group has-feedback hideDivision" style="margin:15px;" id="changeSort">
+					<div class="form-group has-feedback hideDivision" style="margin:-1px;" id="changeSort">
 						<div class="secTableData inSort" onclick="changeOrder('Doc_Name')">Document Name Asc</div>
 						<div class="secTableData inSort" onclick="changeOrder('Doc_Name DESC')">Document Name Desc</div>
 						<div class="secTableData inSort" onclick="changeOrder('Doc_Extension')">File Type Asc</div>
@@ -65,7 +65,7 @@
 						$count=1;
 						while($row = mysqli_fetch_array($result)) {
 							echo '
-							<div style="width:80%; height:80px; margin:2% 5%; border:2.5px solid #000080; padding:2% 5%; border-radius:10px;">
+							<div style="width:85%; height:80px; margin:2%; border:2.5px solid #000080; padding:2% 5%; border-radius:10px;">
 								<div class="container">
 									<div class="row">
 										<div class="col-1">
@@ -85,15 +85,15 @@
 											<label>Uploader Name&emsp; &nbsp;: '.$row['User_Fname'].' '.$row['User_Lname'].'</label><br>
 											<label>Upload Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label><br>
 										</div>
-										<div class="col-1">';
+										<div class="col-2">';
 											$queryReq = "SELECT Request_ID FROM requestdocument WHERE User_ID='".$_SESSION["userid"]."' and Doc_ID='".$row['Doc_ID']."'";
 											$resultReq= mysqli_query($connect, $queryReq);
 											if(mysqli_num_rows($resultReq)==0) {
 												$action="alterUser('Request','".$_SESSION["userid"]."','".$row['Doc_ID']."','".$row['User_ID']."')";
-												echo '<span class="" onclick="'.$action.'">Request Access</span>';
+												echo '<span id="req-'.$row['Doc_ID'].'" class="reqButton" style="color:blue;" onclick="'.$action.'">Request</span>';
 											}
 											else {
-												echo '<span class="">Access Requested Already</span>';
+												echo '<span class="reqButton" style="color:orange;" class="">Requested</span>';
 											}
 										echo'
 										</div>
@@ -136,7 +136,8 @@
 				Type:type,
 			},
 			success:function(data){
-				alert("Request Sent");
+				$("#req-"+documentID).text("Requested");
+				$("#req-"+documentID).css("color", "orange");
 			}
 		});
 	}

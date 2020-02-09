@@ -17,7 +17,6 @@
 			.loginButton:hover { background-color: #6666ff;}
 		</style>
 	</head>
-	<?php include 'navbar.php'; ?>
 	<body style="background-image: linear-gradient(#6666ff,#55AAD0); margin:0px; position:relative;">
 		<div style="height:40%; padding:9.5% 0%;">
 			<div class="blur">
@@ -54,8 +53,10 @@
 				output=data.split(' | ');
 				if (output[1]=="1")
 					window.location.href='index.php';
-				else
+				else if (output[1]=="2")
 					document.getElementById("output").innerHTML = output[0];
+				else if (output[1]=="3")
+					window.location.href=output[0];
 			}
 		});
 	}

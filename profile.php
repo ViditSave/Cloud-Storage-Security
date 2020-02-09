@@ -16,9 +16,12 @@
 					.uploadedFiles{width:90% !important; margin:25px auto;}
 					.hideDivision{display:none;}
 					.showDivision{display:block;}
+					.cardHead {background-color:#6666FF; color:white; padding:20px; cursor:pointer; font-weight:bold; margin:15px;}
+					.cardHead label {display:inline-block; line-height:2.5px;}
+					.ellipsis {white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+					.enterButton { width:26px; height:26px; margin:1px 0px; float:right; border-radius:50%; border:2px solid #000080; color:#000080; background-color:white;}
 				</style>
 			</head>
-			<?php include 'navbar.php'; ?>
 			<body style="background-image: linear-gradient(#6666ff,#55AAD0); margin:0px; position:relative;">
 				<div style="min-height:70%; width:1200px; margin:60px auto 0px auto">
 					<div class="secTable">
@@ -66,8 +69,8 @@
 								}
 								
 								echo '
-								<div style="width:70%; margin:5% 15%;">
-									<div style="width:50%; float:left;">
+								<div style="width:70%; margin:5% 15%; font-weight:bold;">
+									<div style="width:55%; float:left;">
 										<label>Full Name</label><br>
 										<label>Email ID</label><br>
 										<label>No. of Documents Uploaded</label><br>
@@ -75,7 +78,7 @@
 										<label>No. of Document Requests Sent</label><br>
 										<label>No. of Access Requests Recieved</label><br>
 									</div>
-									<div style="width:50%; float:right;">
+									<div style="width:45%; float:right;">
 										<label>: '.$row1['User_Fname'].' '.$row1['User_Lname'].'</label><br>
 										<label>: '.$row1['User_email'].'</label><br>
 										<label>: '.$row2['Count(Doc_ID)'].'</label><br>
@@ -107,29 +110,30 @@
 								$query = "SELECT Doc_ID, Timestamp FROM requestdocument WHERE User_ID='".$_SESSION['userid']."'";
 								$result = mysqli_query($connect, $query);
 								if(mysqli_num_rows($result)==0)
-									echo "You have not requested privileges to any files";
+									echo "<center><span>You have not requested privileges to any files</span></center>";
 								else {
 									$count=1;
 									while($row = mysqli_fetch_array($result)) {
 										$result1 = mysqli_query($connect, "SELECT Doc_Name,Doc_Extension FROM document WHERE Doc_ID=".$row['Doc_ID']);
 										$row1 = mysqli_fetch_array($result1);
 										echo  '
-										<div style="width:80%; height:70px; margin:2% 5%; border:1px solid #000080; padding:2% 5%; border-radius:10px;">
-											<label>Document Name&emsp; : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</label><br>
-											<label>Request Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label>
+										<div class="cardHead">
+											<label style="float:left;">'.$count.'.&emsp; Doc. Name : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</label>
+											<label style="float:right;">Request Date : '.date('d M, Y',strtotime($row['Timestamp'])).'</label>
 										</div>';
+										$count+=1;
 									}
 								}
 							?>
 						</div>
 						
 						<div id="Access_Requests" class="tab5 hideDivision">
-							<h1 style="color:#000080; margin:0px;"><b><center>Give Access</b></h1><hr>
+							<h1 style="color:#000080; margin:0px;"><b><center>Access Requests for your Files</b></h1><hr>
 							<?php
 								$query = "SELECT Doc_ID, Timestamp, User_ID FROM requestdocument WHERE Owner_ID='".$_SESSION['userid']."'";
 								$result = mysqli_query($connect, $query);
 								if(mysqli_num_rows($result)==0)
-									echo "You do not have any access requests";
+									echo "<center><span>You do not have any access requests</span></center>";
 								else {
 									$count=1;
 									while($row = mysqli_fetch_array($result)) {
@@ -138,10 +142,16 @@
 										$result2 = mysqli_query($connect, "SELECT User_Name FROM user WHERE User_ID=".$row['User_ID']);
 										$row2 = mysqli_fetch_array($result2);
 										echo  '
-										<div style="width:80%; height:70px; margin:2% 5%; border:1px solid #000080; padding:2% 5%; border-radius:10px;">
-											<label>Document Name&emsp; : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</label><br>
-											<label>Request Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label>
-											<input type="button" onclick="alterUser(\'GiveAccess\',\''.$row2['User_Name'].'\','.$row1['Doc_ID'].')" value="&check;" style="width:26px; height:26px; margin:1px 0px; float:right; border-radius:50%; border:2px solid #000080; color:#000080; background-color:white;">
+										<div class="cardHead" style="height:50px; padding:20px 25px;">
+											<div style="width:60%; float:left;">
+												<label style="padding:5px;">User Name &emsp; &emsp; &emsp; : '.$row2['User_Name'].'</label><br>
+												<label style="padding:5px;">Document Name&emsp; : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</label>
+												<label style="padding:5px;">Request Time &emsp; &emsp; : '.date('d M, Y',strtotime($row['Timestamp'])).'</label>
+											</div>
+											<div style="width:20%; float:right;">
+												<input type="button" onclick="addRemoveUser(\'GiveFileAccess\',\''.$row2['User_Name'].'\','.$row1['Doc_ID'].')" value="&check;" class="enterButton">
+												<input type="button" onclick="addRemoveUser(\'RemoveAccessRequest\',\''.$row['User_ID'].'\','.$row1['Doc_ID'].')" value="&cross;" class="enterButton" style="margin-right:10px;">
+											</div>
 										</div>';
 									}
 								}
@@ -154,7 +164,7 @@
 								$query = "SELECT Doc_ID, Access_Expiry FROM accessdocument WHERE User_Name='".$_SESSION['username']."'";
 								$result = mysqli_query($connect, $query);
 								if(mysqli_num_rows($result)==0)
-									echo "You don't have read privileges to any files";
+									echo "<center><span>You don't have read privileges to any files</span></center>";
 								else {
 									$count=1;
 									while($row = mysqli_fetch_array($result)) {
@@ -166,7 +176,7 @@
 												<div style="width:7.5%; display:inline-block;">'.$count.'.</div>
 												<div style="width:40%; display:inline-block;">File Name : '.$row1['Doc_Name'].'.'.$row1['Doc_Extension'].'</div>
 												<div style="width:40%; display:inline-block; float:right;">File Owner : '.$row2['User_Name'].'</div>
-												<div style="width:90%; display:inline-block; margin-left:8%; margin-top:10px;">Expiry Date : '.date('d M, Y - h:ia',strtotime($row['Access_Expiry'])).'</div>
+												<div style="width:90%; display:inline-block; margin-left:8%; margin-top:10px;">Access Date : '.date('d M, Y - h:ia',strtotime($row['Access_Expiry'])).'</div>
 											</div>';
 										$count+=1;
 									}
@@ -222,11 +232,17 @@
 				}
 			}
 			
-			function alterUser(type,textField,documentID) {
+			function addRemoveUser(type,uName,documentID) {
 				if (type=="Grant")
-					var temp=document.getElementById(textField).value;
+					var temp = document.getElementById("inUname"+uName).value;
+				else if (type=="Revoke") {
+					var nameSplit = uName.split("|");
+					var temp = nameSplit[0];
+					uName = nameSplit[1];
+				}
 				else
-					var temp=textField;
+					var temp = uName;
+
 				$.ajax({
 					type:'post',
 					url:'Ajax/alterUserAccess.php',
@@ -236,17 +252,20 @@
 						Type:type,
 					},
 					success:function(data){
-						if (type!="QRcode")
+						if (type=="Grant" | type=="Revoke") {
 							changeTab('.tab2');
-						else {
+							setTimeout(() => { 	openAccess('.body'+uName); }, 250);
+						}
+						else if (type=="QRcode") {
 							$("#myModal").modal();
 							document.getElementById("showDataModal").innerHTML = data;
-							$(".modal-title").text("Share QR Code");
+							$(".modal-title").text("Share QR Code : "+temp);
+							$("#myModal").css("margin","15% 5%");
 						}
 					}
 				});
 			}
-			
+
 			function accessFile(docID) {
 				$.ajax({
 					type:'post',

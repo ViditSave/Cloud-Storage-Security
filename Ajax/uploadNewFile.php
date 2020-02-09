@@ -10,11 +10,12 @@
 			$ext=explode(".",$name);
 			$path = "..\\Uploads\\" . $name;
 			if(move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $path)) {
-				$command = "python ../Python/aesFile.py Encrypt ".$ext[0]." ".$ext[1];
+				$password = "123456789";
+				$command = "python ../Python/aesFile.py Encrypt ".$ext[0]." ".$ext[1]." ".$password;
 				$pid = popen( $command,"r");
 				$py=fread($pid, 256);
 				unlink($path);
-				mysqli_query($connect,"INSERT INTO document(Doc_Name, Doc_Extension, User_ID,Timestamp) VALUES ('".$ext[0]."','".$ext[1]."','".$_SESSION["userid"]."',NOW())");
+				mysqli_query($connect,"INSERT INTO document(Doc_Name, Doc_Extension, Doc_Password, User_ID, Timestamp) VALUES ('".$ext[0]."','".$ext[1]."','".$password."','".$_SESSION["userid"]."',NOW())");
 				$output=  "The file ".$name." has been uploaded";
 			} 
 			else

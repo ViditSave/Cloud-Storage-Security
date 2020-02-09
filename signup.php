@@ -9,46 +9,47 @@
 			label {line-height:30px;}
 			.form {width:400px; margin:auto;}
 			.form-control {width:250px !important; float:right; height:20px !important;}
-			.form-control-feedback {top:0px !important; color:orange;}
-			.blur{width: 50%; padding:25px 20px; background-color:white; border-radius: 25px; margin:35px auto;}
+			.form-group .fas {line-height:30px; color:orange; float:right; margin-left:10px;}
+			.blur{width: 60%; padding:25px 20px; background-color:white; border-radius: 25px; margin:35px auto;}
 			.signUpButton{color:white; background-color:#000080; width:25%; font-size:1vw; padding:2px; border-radius:15px; margin:auto;}
 			.signUpButton:hover { background-color: #6666ff;}
+			.success {color:green !important;}
+			.failure {color:red !important; margin-left:20px !important;}
 		</style>
 	</head>
-	<?php include 'navbar.php'; ?>
 	<body style="background-image: linear-gradient(#6666ff,#55AAD0); margin:0px; position:relative;">
 		<div class="blur">
 			<h1 style="color:#000080; margin:0px;"><b><center>Sign Up</center></b></h2><hr>
 			<form class="form" role="form">
-				<div class="form-group has-feedback" id="Fname">
+				<div class="form-group" id="Fname">
 					<label>First Name</label>
+					<span class="fas fa-asterisk" id="icFname"></span>
 					<input type="text" class="form-control" id="inFname" placeholder="Enter your First Name">
-					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icFname"></span>
 				</div>
-				<div class="form-group has-feedback" id="Lname">
+				<div class="form-group" id="Lname">
 					<label>Last Name</label>
+					<span class="fas fa-asterisk" id="icLname"></span>
 					<input type="text" class="form-control" id="inLname" placeholder="Enter your Last Name">
-					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icLname"></span>
 				</div>
-				<div class="form-group has-feedback" id="Uname">
+				<div class="form-group" id="Uname">
 					<label>User Name</label>
+					<span class="fas fa-asterisk" id="icUname"></span>
 					<input type="text" class="form-control" id="inUname" placeholder="Enter your User Name">
-					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icUname"></span>
 				</div>
-				<div class="form-group has-feedback" id="Pass">
+				<div class="form-group" id="Pass">
 					<label>Password</label>
+					<span class="fas fa-asterisk" id="icPass"></span>
 					<input type="password" class="form-control" id="inPass" placeholder="Enter your Password">
-					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icPass"></span>
 				</div>
-				<div class="form-group has-feedback" id="Email">
+				<div class="form-group" id="Email">
 					<label>Email</label>
+					<span class="fas fa-asterisk" id="icEmail"></span>
 					<input type="text" class="form-control" id="inEmail" placeholder="Enter your Email Address">
-					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icEmail"></span>
 				</div>
-				<div class="form-group has-feedback" id="Contact">
+				<div class="form-group" id="Contact">
 					<label>Contact</label>
+					<span class="fas fa-asterisk" id="icContact"></span>
 					<input type="text" class="form-control" id="inContact" placeholder="Enter your Contact Number">
-					<span class="glyphicon glyphicon-asterisk form-control-feedback" id="icContact"></span>
 				</div>
 				<p style="color:red; text-align:center;" id="output"></p>
 				<center><input type="button" onclick="checkSignUp()" class="signUpButton" id="submitButton" value="Submit"></center>
@@ -73,11 +74,11 @@
 				Contact:document.getElementById("inContact").value,
 			},
 			success:function(data){
-				$('span').removeClass('glyphicon-asterisk');
-				$('span').removeClass('glyphicon-remove');
-				$('span').addClass('glyphicon-ok');
-				$('.form-group').removeClass('has-error');	
-				$('.form-group').addClass('has-success');
+				$('span').removeClass('fa-asterisk');
+				$('span').removeClass('fa-exclamation');
+				$('span').addClass('fa-check');
+				$('span').removeClass('failure');	
+				$('span').addClass('success');
 				errors = data.split(' | ');
 				if (errors[0]=="6") {
 					document.getElementById("submitButton").disabled = true;
@@ -101,10 +102,10 @@
 					for (i=0; i<(errors.length-1); i++) {
 						var inTemp="#"+errors[i];
 						var icTemp='#ic'+errors[i];
-						$(icTemp).removeClass('glyphicon-ok');
-						$(icTemp).addClass('glyphicon-remove');
-						$(inTemp).removeClass('has-success');
-						$(inTemp).addClass('has-error');
+						$(icTemp).removeClass('fa-check');
+						$(icTemp).addClass('fa-exclamation');
+						$(icTemp).removeClass('success');
+						$(icTemp).addClass('failure');
 					}
 					document.getElementById("output").innerHTML = "Please check the information you entered";
 				}
