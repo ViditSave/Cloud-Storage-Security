@@ -10,12 +10,17 @@
 			$ext=explode(".",$name);
 			$path = "..\\Uploads\\" . $name;
 			if(move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $path)) {
-				$password = "123456789";
-				$command = "python ../Python/aesFile.py Encrypt ".$ext[0]." ".$ext[1]." ".$password;
-				$pid = popen( $command,"r");
-				$py=fread($pid, 256);
+				$plaintext = file_get_contents('../Uploads/'.$name); //Get the code to be encypted.
+				$cipher = "aes-256-cbc";
+				$key="123456789";
+				$ivlen = openssl_cipher_iv_length($cipher);
+				$iv = openssl_random_pseudo_bytes($ivlen);
+				$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv);
+				$encryptedTest = base64_encode($ciphertext . '::' . $iv);
+				file_put_contents('..\\Uploads\\'.$ext[0].'.aes', $encryptedTest); //Save the ecnypted code somewhere.
+
 				unlink($path);
-				mysqli_query($connect,"INSERT INTO document(Doc_Name, Doc_Extension, Doc_Password, User_ID, Timestamp) VALUES ('".$ext[0]."','".$ext[1]."','".$password."','".$_SESSION["userid"]."',NOW())");
+				mysqli_query($connect,"INSERT INTO document(Doc_Name, Doc_Extension, Doc_Password, User_ID, Timestamp) VALUES ('".$ext[0]."','".$ext[1]."','".$key."','".$_SESSION["userid"]."',NOW())");
 				$output=  "The file ".$name." has been uploaded";
 			} 
 			else

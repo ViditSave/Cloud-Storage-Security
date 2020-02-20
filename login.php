@@ -15,10 +15,17 @@
 			.blur{width: 50%; padding:25px 20px; background-color:white; border-radius: 25px; margin:auto;}
 			.loginButton{color:white; background-color:#000080; width:25%; font-size:1vw; padding:2px; border-radius:15px; margin:auto;}
 			.loginButton:hover { background-color: #6666ff;}
+			@media (min-width: 350px) and (max-width:550px)  {
+				.blur { width:80%;}
+				.loginButton { font-size:2.5vw; margin-top:2px; padding:10px 5px;}
+				.respParentDiv { padding:7.5% 0% 50% 0% !important;}
+				.form-control { width:100px; float:none;}
+				.form {width:100%; margin:auto;}
+			}		
 		</style>
 	</head>
 	<body style="background-image: linear-gradient(#6666ff,#55AAD0); margin:0px; position:relative;">
-		<div style="height:40%; padding:9.5% 0%;">
+		<div style="height:40%; padding:9.5% 0%;" class="respParentDiv">
 			<div class="blur">
 				<h1 style="color:#000080; margin:0px;"><b><center>Log In</center></b></h2><hr>
 				<form class="form" role="form">

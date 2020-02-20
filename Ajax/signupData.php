@@ -44,11 +44,11 @@
 			$sql_val="SELECT User_ID FROM user where User_Fname='".$fname."' and User_Lname='".$lname."' and User_email='".$email."'";
 			$result_val=mysqli_query($connect,$sql_val);
 			$row_val = mysqli_fetch_array($result_val);
-			$command = "python ../Python/keyHash.py Signup ".$passw;
-			$pid = popen( $command,"r");
-			$py=fread($pid, 256);
-			$arr= explode(" ",$py);
-			$sql_login="INSERT INTO login VALUES (".$row_val['User_ID'].",'".$uname."','".$arr[0]."', '".$arr[1]."')";
+			
+			$funType = "Signup";
+			$password = $passw;
+			include 'keyHash.php';
+			$sql_login="INSERT INTO login VALUES (".$row_val['User_ID'].",'".$uname."','".$finalKey."', '".$salt."')";
 			mysqli_query($connect,$sql_login);
 			$_SESSION["username"] = $uname;
 			$_SESSION["userid"] = $row_val["User_ID"];

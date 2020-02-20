@@ -31,7 +31,6 @@
 			include('../Libraries/PHPQrcode/qrlib.php');
 			$result = mysqli_query($connect, "SELECT File_Pwd FROM accessdocument WHERE User_Name='".$_POST['Uname']."' AND Doc_ID='".$_POST['DocID']."'");
 			$row = mysqli_fetch_array($result);
-			#$codeContents = "http://localhost/SecureStorage/displayFile.php?DocID=".$_POST['DocID']."&Pass=".$row['File_Pwd'];
 			$codeContents = "http://securestore.com/SecureStorage/displayFile.php?DocID=".$_POST['DocID']."&Pass=".$row['File_Pwd'];
 			QRcode::png($codeContents,'../Images/QRcodes/'.$_POST['DocID'].$_POST['Uname'].'.png');
 			echo "<img src='Images/QRcodes/".$_POST['DocID'].$_POST['Uname'].".png' style='width:200px; height:200px; display:block; margin:auto;'>";

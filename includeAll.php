@@ -12,30 +12,33 @@
 		echo '
 			<style>
 				#home { font-size:3vw; text-decoration:none; color:white;}
-				.buttonView{ display: inline-block; background-color: #00000000; border: 0px; padding: 5px 20px; font-size:1.5vw; margin-top:5px; text-decoration: none; color:white;}
-				.buttonView:hover {border-bottom:2px solid;}
+				.buttonView1, .buttonView2{ display: inline-block; background-color: #00000000; border: 0px; padding: 5px 20px; font-size:1.5vw; margin-top:5px; text-decoration: none; color:white;}
+				.buttonView1:hover, .buttonView2:hover {border-bottom:2px solid;}
 				ul li{display:none;}
 				ul:hover li{display:block; position:relative; top:50px; height:30px;}
 				@media (min-width: 350px) and (max-width:550px)  {
 					#home { font-size:6vw;}
-					.buttonView{ border: 1px solid white; border-radius: 10%; font-size:2.5vw; margin-top:2px;}
+					.buttonView1 { border: 1px solid white; border-radius: 10%; font-size:2.5vw; margin:25px 0px 0px 22%;}
+					.buttonView2 { border: 1px solid white; border-radius: 10%; font-size:2.5vw; margin:25px 0px 0px 8%;}
+					.sidebar {clear:both; width:100%; margin:auto;}
+					.nav_bar {height:100px !important;}
 				}		
 			</style>
-			<div style="height:50px; padding:7.5px 0px; color:white; background:#6666ff; position:sticky; width:100%; top:0px; left:0px; z-index:10;">
+			<div class="nav_bar" style="height:50px; padding:7.5px 0px; color:white; background:#6666ff; position:sticky; width:100%; top:0px; left:0px; z-index:10;">
 				<div style="float:left; height:30px; margin-left:30px;">
 					<img src="Images/cloud_logo.png" alt="Logo" height="40px" style="margin-right:5px; vertical-align:initial;">
 					<a id="home" href="index.php" style="line-height:10px;">Secure Storage</a>
 				</div>
-				<div style="float:right; margin-right:20px;">';
+				<div class="sidebar" style="float:right; margin-right:20px;">';
 					if (isset($_SESSION["username"])&isset($_SESSION["userid"]))
 						echo '
-						<button class="buttonView" onclick="window.location.href=\'search.php\'"><i class="fas fa-search"  style="margin-right:10px;"></i>Search</button>
-						<button class="buttonView" onclick="window.location.href=\'profile.php\'"><i class="fas fa-user-tie" style="margin-right:10px;"></i>Profile</button>
-						<button class="buttonView" onclick="window.location.href=\'logout.php\'"><i class="fas fa-times-circle" style="margin-right:10px;"></i>Logout</button>';
+						<button class="buttonView2" onclick="window.location.href=\'search.php\'"><i class="fas fa-search"  style="margin-right:10px;"></i>Search</button>
+						<button class="buttonView2" onclick="window.location.href=\'profile.php\'"><i class="fas fa-user-tie" style="margin-right:10px;"></i>Profile</button>
+						<button class="buttonView2" onclick="window.location.href=\'logout.php\'"><i class="fas fa-times-circle" style="margin-right:10px;"></i>Logout</button>';
 					else
 						echo '
-						<button class="buttonView" onclick="window.location.href=\'login.php\'"><i class="fas fa-user-lock" style="margin-right:10px;"></i>Login</button>
-						<button class="buttonView" onclick="window.location.href=\'signup.php\'"><i class="fas fa-user-plus" style="margin-right:10px;"></i>Signup</button>';
+						<button class="buttonView1" onclick="window.location.href=\'login.php\'"><i class="fas fa-user-lock" style="margin-right:10px;"></i>Login</button>
+						<button class="buttonView1" onclick="window.location.href=\'signup.php\'"><i class="fas fa-user-plus" style="margin-right:10px;"></i>Signup</button>';
 				echo '
 				</div>
 			</div>';

@@ -7,11 +7,17 @@
 			$query = "SELECT Doc_Name, Doc_Extension FROM document where Doc_ID = ".$_POST['DocID'];
 			$result= mysqli_query($connect, $query);
 			$row = mysqli_fetch_array($result);
-			$password = "123456789";
-			$command = "python ../Python/aesFile.py Decrypt ".$row['Doc_Name']." ".$row['Doc_Extension']." ".$password;
-			$pid = popen( $command,"r");
-			$py=fread($pid, 256);
 			
+			$cipherText = file_get_contents('../Uploads/'.$row['Doc_Name'].".aes");
+			$tempCText = explode("::", base64_decode($cipherText));
+			$cipherText = $tempCText[0];
+			$cipher = "aes-256-cbc";
+			$key="123456789";
+			$ivlen = openssl_cipher_iv_length($cipher);
+			$iv = $tempCText[1];
+			$original_plaintext = openssl_decrypt($cipherText, $cipher, $key, $options=0, $iv);
+			file_put_contents('..\\Uploads\\tempDecrypted\\'.$row['Doc_Name'].'.'.$row['Doc_Extension'], $original_plaintext); //Save the ecnypted code somewhere.
+
 			echo $row['Doc_Name'].".".$row['Doc_Extension']."|||||";
 			$path = "Uploads/tempDecrypted/".$row['Doc_Name'].".".$row['Doc_Extension'];
 			
