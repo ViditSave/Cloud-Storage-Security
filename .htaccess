@@ -1,0 +1,16 @@
+RewriteEngine on 
+# NC makes the rule non case sensitive
+# L makes this the last rule that this specific condition will match
+# $ in the regular expression makes the matching stop so that "customblah" will not work
+
+RewriteRule ^Home$ index.php [NC,L]
+
+RewriteRule ^Login$ login.php [NC,L]
+RewriteRule ^SignUp$ signup.php [NC,L]
+RewriteRule ^Profile$ profile.php [NC,L]
+RewriteRule ^Search$ search.php [NC,L]
+RewriteRule ^Logout$ logout.php [NC,L]
+
+#RewriteRule ^Product/([a-zA-Z]+)$ productlist.php?Type=$1 [NC,L]
+#RewriteRule ^Appliance/([A-Za-z0-9_]+)$ appliance.php?Name=$1 [NC,L]
+#ErrorDocument 404 /SecureStorage/error.php

@@ -20,12 +20,7 @@
 			$fetchSalt=mysqli_query($connect,"SELECT Salt FROM login where User_Name='".$uname."'");
 			$rowSalt=mysqli_fetch_assoc($fetchSalt);
 			if(mysqli_num_rows($fetchSalt)!=0) {
-				/*
-				$command = "python ../Python/keyHash.py Login ".$pass." ".$rowSalt['Salt'];
-				$pid = popen( $command,"r");
-				$py=fread($pid, 256);
-				$arr= explode(" ",$py);
-				*/
+				
 				$funType = "Login";
 				$password = $pass;
 				$salt = $rowSalt['Salt'];

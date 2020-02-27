@@ -1,8 +1,8 @@
-<h1 style="color:#000080; margin:0px;"><b><center>Uploaded Files</center></b></h1><hr>
 <?php
 	session_start();
 	$file="ajax";
 	include '../includeAll.php';
+	echo '<h1 style="color:#000080; margin:0px;"><b><center>Uploaded Files</center></b></h1><hr>';
 	$query = "SELECT Doc_ID, Doc_Name, Doc_Extension, Timestamp FROM document where User_ID='".$_SESSION['userid']."' ORDER BY Timestamp DESC";
 	$result = mysqli_query($connect, $query);
 	if(mysqli_num_rows($result)==0)

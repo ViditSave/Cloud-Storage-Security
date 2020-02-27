@@ -8,7 +8,17 @@ if ($funType == "Signup") {
         $salt .= $saltElements[$index];
 	}
 }
-
+if ($funType == 'FileEncr') {
+	$possElements = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	$password = "";
+	$salt = "";
+	for ($i=0;$i<32;$i+=1) {
+		$indexPass = rand(0, strlen($possElements) - 1);
+		$indexSalt = rand(0, strlen($possElements) - 1); 
+        $password .= $possElements[$indexPass];
+		$salt .= $possElements[$indexSalt];
+	}
+}
 $password = str_pad($password,32,"0",STR_PAD_RIGHT);
 $tempPass = $password.$salt;
 $tempPassArray = str_split($tempPass, 8);
@@ -56,5 +66,8 @@ for ($i=0;$i<strlen($tempFinalKey);$i+=1) {
 
 $finalKey = strval($finalKey);
 $salt = strval($salt);
+if ($funType == "FileEncr") {
+	$keyFinal = $finalKey.''.$salt;
+}
 unset($funType);
 ?>

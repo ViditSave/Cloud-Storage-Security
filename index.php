@@ -14,7 +14,7 @@
 			#respDesign {border-radius:0px; box-shadow:none; padding:5px; height:auto; max-height:70%; margin:70px auto; display:block;}
 		</style>
 	</head>
-	<body id="page1" style="margin:0px; position:relative;">
+	<body id="Top" style="margin:0px; position:relative;">
 		<div style="height:90%; width:100%; background-image: linear-gradient(#6666ff,#55AAD0); color:white; position:fixed;">
 			<div style="width:49%; float:left; height:72.5%;">
 				<div style="margin:70px 0px 0px 60px; display:block ">
@@ -24,11 +24,11 @@
 						<center>
 							<?php
 							if (isset($_SESSION["username"])&isset($_SESSION["userid"]))
-								echo '<button onclick="window.location.href=\'profile.php\'" class="buttonStyle">Profile</button>
-									  <button onclick="window.location.href=\'search.php\'" class="buttonStyle">Search</button>';
+								echo '<button onclick="window.location.href=\'Profile\'" class="buttonStyle">Profile</button>
+									  <button onclick="window.location.href=\'Search\'" class="buttonStyle">Search</button>';
 							else
-								echo '<button onclick="window.location.href=\'login.php\'"  class="buttonStyle">Login</button>
-									  <button onclick="window.location.href=\'signup.php\'" class="buttonStyle">Signup</button>';
+								echo '<button onclick="window.location.href=\'Login\'"  class="buttonStyle">Login</button>
+									  <button onclick="window.location.href=\'SignUp\'" class="buttonStyle">Signup</button>';
 							?>
 						</center>
 					</div>
@@ -38,7 +38,7 @@
 				<img src="Images/responsive_screen.png" id="respDesign" alt="Responsive Blank" height="10px">
 			</div>
 			<div style="width:100%; clear:both; padding-top:0px;">
-				<center><a href="#down"><span class="fas fa-angle-double-down" alt="circle-down" style="box-shadow: 0px 0px 15px white; color:white;"></span></a></center>
+				<center><a href="#Down"><span class="fas fa-angle-double-down" alt="circle-down" style="box-shadow: 0px 0px 15px white; color:white;"></span></a></center>
 			</div>
 		</div>
 		<div style="z-index: 1; margin-top:38.5%; position:relative;">
@@ -48,7 +48,7 @@
 				$text=0;
 				include 'footer.php'; 
 			?>
-			<div id="down" style="height:90%; width:94%; background-color:white; padding:0px 3%; color:black;">
+			<div id="Down" style="height:90%; width:94%; background-color:white; padding:0px 3%; color:black;">
 				<p style="font-size:3vw; text-align:center; padding-top:80px; padding-bottom:25px; margin:0px;">What do we offer</p>
 				<div class="blocks">
 					<center>
@@ -72,7 +72,7 @@
 					<p style="text-align:justify; padding:0px 40px; margin-top:0px;">We value the user experience and try to create a website accessible and user friendly.</p>
 				</div>
 				<div style="width:100%; clear:both; padding-top:20px;">
-					<center><a href="#top"><span class="fas fa-angle-double-up" alt="circle-up" style="color:black;"></span></a></center>
+					<center><a href="#Top"><span class="fas fa-angle-double-up" alt="circle-up" style="color:black;"></span></a></center>
 				</div>
 			</div>
 			<?php 

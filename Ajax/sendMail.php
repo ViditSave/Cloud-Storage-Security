@@ -2,9 +2,11 @@
 	session_start();	
 	use PHPMailer\PHPMailer\PHPMailer;
 	use PHPMailer\PHPMailer\Exception;
-	require 'C:\xampp\htdocs\SecureStorage\Libraries\PHPMailer\src\Exception.php';
-	require 'C:\xampp\htdocs\SecureStorage\Libraries\PHPMailer\src\PHPMailer.php';
-	require 'C:\xampp\htdocs\SecureStorage\Libraries\PHPMailer\src\SMTP.php';
+		
+	require '../Libraries/PHPMailer/src/Exception.php';
+	require '../Libraries/PHPMailer/src/PHPMailer.php';
+	require '../Libraries/PHPMailer/src/SMTP.php';
+
 	$mailType=$_POST["Type"];
 	if ($mailType=="Sign Up") {
 		if(isset($_POST['Fname']) & isset($_POST['Lname']) & isset($_POST['Email']) & isset($_POST['Type']) & isset($_POST['Uname']) ) {

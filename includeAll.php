@@ -1,14 +1,18 @@
 <?php
+	// Local Host
 	$connect = mysqli_connect("localhost", "root", "", "SecureStorage");
+	
+	// Web Server
+	//$connect = mysqli_connect("localhost", "id12304610_ssdb", "SecureVidit", "id12304610_securestorage");
+	
 	if (!(isset($file))) {
 		
 		echo '
 			<script type="text/javascript" src="Libraries/JQuery/jquery.min.js"></script>
+			<script type="text/javascript" src="Libraries/JQuery/popper.min.js"></script>
 			<script type="text/javascript" src="Libraries/Bootstrap/js/bootstrap.min.js"></script>
 			<link rel="stylesheet" type="text/css" href="Libraries/Bootstrap/css/bootstrap.min.css">
-			<link rel="stylesheet" type="text/css" href="Libraries/FontAwesome/css/all.css">
-			
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>';
+			<link rel="stylesheet" type="text/css" href="Libraries/FontAwesome/css/all.css">';
 		echo '
 			<style>
 				#home { font-size:3vw; text-decoration:none; color:white;}
@@ -27,18 +31,18 @@
 			<div class="nav_bar" style="height:50px; padding:7.5px 0px; color:white; background:#6666ff; position:sticky; width:100%; top:0px; left:0px; z-index:10;">
 				<div style="float:left; height:30px; margin-left:30px;">
 					<img src="Images/cloud_logo.png" alt="Logo" height="40px" style="margin-right:5px; vertical-align:initial;">
-					<a id="home" href="index.php" style="line-height:10px;">Secure Storage</a>
+					<a id="home" href="Home" style="line-height:10px;">Secure Storage</a>
 				</div>
 				<div class="sidebar" style="float:right; margin-right:20px;">';
 					if (isset($_SESSION["username"])&isset($_SESSION["userid"]))
 						echo '
-						<button class="buttonView2" onclick="window.location.href=\'search.php\'"><i class="fas fa-search"  style="margin-right:10px;"></i>Search</button>
-						<button class="buttonView2" onclick="window.location.href=\'profile.php\'"><i class="fas fa-user-tie" style="margin-right:10px;"></i>Profile</button>
-						<button class="buttonView2" onclick="window.location.href=\'logout.php\'"><i class="fas fa-times-circle" style="margin-right:10px;"></i>Logout</button>';
+						<button class="buttonView2" onclick="window.location.href=\'Search\'"><i class="fas fa-search"  style="margin-right:10px;"></i>Search</button>
+						<button class="buttonView2" onclick="window.location.href=\'Profile\'"><i class="fas fa-user-tie" style="margin-right:10px;"></i>Profile</button>
+						<button class="buttonView2" onclick="window.location.href=\'Logout\'"><i class="fas fa-times-circle" style="margin-right:10px;"></i>Logout</button>';
 					else
 						echo '
-						<button class="buttonView1" onclick="window.location.href=\'login.php\'"><i class="fas fa-user-lock" style="margin-right:10px;"></i>Login</button>
-						<button class="buttonView1" onclick="window.location.href=\'signup.php\'"><i class="fas fa-user-plus" style="margin-right:10px;"></i>Signup</button>';
+						<button class="buttonView1" onclick="window.location.href=\'Login\'"><i class="fas fa-user-lock" style="margin-right:10px;"></i>Login</button>
+						<button class="buttonView1" onclick="window.location.href=\'SignUp\'"><i class="fas fa-user-plus" style="margin-right:10px;"></i>Signup</button>';
 				echo '
 				</div>
 			</div>';
